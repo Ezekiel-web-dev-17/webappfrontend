@@ -1,0 +1,25 @@
+.home-div div {
+  margin-top: 15px;
+    padding-inline: 20px;
+}
+
+.home-div {
+    background: #000;
+    height: 100vh;
+}
+
+.chat {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    background: #000;
+    border-bottom: 2px solid #fff;
+}
+
+.div1, .div2, img, h5, p {
+    background: #000;
+}
+
+.chat p {
+    color: rgb(199, 198, 198);
+}

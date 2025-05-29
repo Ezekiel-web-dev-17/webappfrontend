@@ -1,0 +1,38 @@
+.chat-nav {
+    box-shadow: 0 3px 5px #5f5e5e;
+}
+
+.time {
+    font-size: 12px;
+}
+
+.text-sender {
+    bottom: 0vh;
+    display: flex; 
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    box-shadow: 0 -3px 5px #5f5e5e;
+}
+
+.text-sender textarea {
+    background: #3b3b3b;
+    height: 30px;
+}
+
+.text-sender textarea:focus {
+    outline: 0;
+}
+
+.send-camera {
+    right: 17%;
+} 
+
+.clip {
+    right: 24%;
+}
+
+.send-btn, .send-btn-img {
+    background: rgb(49, 124, 19);
+    max-height: 31px;
+}
