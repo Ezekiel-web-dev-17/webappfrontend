@@ -1,19 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Playwrite+HU:wght@100..400&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Playwrite+HU:wght@100..400&display=swap");
 
 * {
   background: #242424;
 }
 
 .nav-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 18px 5px;
-  border-bottom: 4px solid #585252;
+  border-bottom: 1px solid #585252;
 }
 
-.logo, .others {
+.nav-nav input::placeholder {
+  font-size: 12px;
+  font-style: italic;
+  color: #fff;
+}
+
+.nav-nav input {
+  font-style: normal;
+  color: #fff;
+}
+
+.logo,
+.others {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -30,13 +37,6 @@ h4 {
   font-style: normal;
 }
 
-
 .others {
-  gap: 25px;
-}
-
-.others:nth-child(1),
-.others:nth-child(2),
-.others:nth-child(3) {
-  font-size: 18px; 
+  gap: 15px;
 }

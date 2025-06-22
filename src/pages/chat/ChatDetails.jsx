@@ -1,99 +1,160 @@
-import React from 'react'
-import react from '../../assets/react.svg'
-import {Link} from 'react-router-dom'
-import "./ChatDetails.css"
-import {  BsCamera, BsChevronLeft,    BsPaperclip,  BsPlus,  BsSend } from 'react-icons/bs'
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { ApiContext } from "../../context/ApiContext.jsx";
+import "./ChatDetails.css";
+import { BsArrowLeftShort, BsPerson, BsSend } from "react-icons/bs";
+import { demoMessages } from "../../demo/demoMsgs.js";
 
-const ChatDetails = () => {
+const ChatDetails = ({ user }) => {
+  user.id = 2007;
+  const { chatId } = useParams();
+  const api = useContext(ApiContext);
+  const [messages, setMessages] = useState(demoMessages);
+  const [newMessage, setNewMessage] = useState("");
+  const messagesEndRef = useRef(null);
+
+  // Fetch messages for this chatId
+  useEffect(() => {
+    if (!user) return;
+
+    const getMsgs = new Promise((resolve, reject) => {
+      const getMsg = async () => {
+        try {
+          const res = await api.get("/messages/");
+          // Assume res.data is an array of { _id, text, senderId, timestamp }
+          setMessages(res.data);
+          resolve("Gotten messages");
+        } catch (error) {
+          reject(error);
+        }
+      };
+
+      getMsg();
+    });
+
+    getMsgs
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((reject) => {
+        console.error("Could not fetch Messages:", reject.message);
+      });
+  }, [chatId, user]);
+
+  // Autoscroll to bottom whenever messages change
+  useEffect(() => {
+    messagesEndRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+    });
+  }, [messages]);
+
+  const handleSend = async (e) => {
+    e.preventDefault();
+    if (!newMessage.trim()) return;
+
+    const messageData = {
+      text: newMessage,
+      participants: [Number(chatId.slice(1)), user.id],
+      createdAt: Date(),
+    };
+
+    // Post request to Create messages
+    try {
+      setMessages((prev) => [...prev, messageData]);
+      setNewMessage("");
+      const res = await api.post("/messages/create", messageData);
+    } catch (err) {
+      console.error("Failed to send message:", err);
+    }
+  };
+
+  if (user == null) {
+    return (
+      <p className="text-white mx-5 mt-1">
+        Please <Link to="/login">login</Link> to view the chat.
+      </p>
+    );
+  }
+
   return (
     <div>
-      <nav className="chat-nav d-flex align-items-center px-3 py-2">
+      <nav className="chat-nav d-flex align-items-center px-3 py-2 position-fixed top-0 w-100 z-1">
         <Link to="/">
-          <BsChevronLeft className="fs-5 me-2" />
+          <BsArrowLeftShort className="fs-1 me-2 text-white" />
         </Link>
 
-        <div className="chat bg-transparent border-0 d-flex gap-3 align-items-center">
-          <img className="bg-transparent" src={react} alt="" style={{width: "25px", height: "25px"}} />
-          <div className="div1 bg-transparent">
-            <h5 className=" fs-6 bg-transparent mb-0">HomeChat</h5>
-            <p className="bg-transparent mb-0 fs-6">IAM-ELIMONI: 🤣🤣</p>
+        <div className="chat bg-transparent border-0 d-flex gap-2 align-items-center">
+          <Link to="/">
+            <BsPerson
+              className="border-1 p-1 border-white border rounded-circle text-white bg-white bg-opacity-50"
+              style={{
+                minHeight: "25px",
+                minWidth: "25px",
+              }}
+              alt="person img"
+            />
+          </Link>
+          <div className="div1 bg-transparent text-white">
+            <h5 className=" fs-6 fw-lighter bg-transparent mb-0">
+              {user.name}
+            </h5>
           </div>
         </div>
       </nav>
 
-      <main className='pt-4'>
-        {/* from */}
-        
-            {/* To */}
-        <section className="ms-0 me-5 px-3">
-          <div
-            className=""
-            style={{
-              borderRadius: "10px 10px 10px 0px / 10px 10px 10px 0px",
-              backgroundColor: "#444",
-            }}
-          >
-            <p className="mb-0 px-3 pt-2 bg-transparent text-wrap">
-              I am Home. Quit Looking for me.
-            </p>
-            <span className=" text-end ">
-              <p className="time mb-0 pe-3 bg-transparent">4:56 PM </p>
-            </span>
-          </div>
-        </section>
-      </main>
-
-      <footer className="text-sender position-absolute py-2">
-        <BsPlus className="fs-1 mx-2" />
-        <form
-          className="w-100 d-flex justify-content-between align-items-center me-3"
-        >
-          <textarea cols="500"
-            className=" placeholder-wave border-0 px-3 py-1 rounded w-100 me-5"
-            placeholder="Message"
-            type="text"
-          ></textarea>
-          <button
-            className="send-btn rounded-circle border-0 ms-4" 
-            onClick={() => {
-              let textMap = [document.querySelector("textarea").value]
-
-              const crux = document.querySelector('main')
-
-              alert(textMap[0])
-
-             textMap.forEach((val) => {
-              return crux.innerHTML = `<section className="ms-5 me-0 px-3 mb-3">
-            <div
-              className=""
-              style={{
-                borderRadius: "10px 10px 0px 10px / 10px 10px 0px 10px",
-                backgroundColor: "#eee",
-                color: "#000",
-              }}
+      {/* Messages Area */}
+      <div
+        className="messages-area flex-grow-1 overflow-auto px-3 mt-5 pt-2 mb-2 pb-5 pb-3 mx-3"
+        ref={messagesEndRef}
+      >
+        {messages.map((msg) => {
+          if (msg.participants.includes(Number(chatId.slice(1)))) {
+            const isMine = msg.participants[1] === user.id;
+            return (
+              <div
+                key={msg._id}
+                className={`message-bubble h-25 p-2 rounded ${
+                  isMine ? "mine" : "theirs "
+                } mb-3`}
               >
-              <p className="mb-0 px-3 pt-2 bg-transparent text-wrap text-black">
-                ${val}
-              </p>
-              <span className=" text-end">
-                <p className="time mb-0 pe-3 bg-transparent text-black">
-                  4:55 PM
-                </p>
-              </span>
-            </div>
-          </section>
-  `;
-              })
+                <p className=" bg-transparent mb-1">{msg.text}</p>
+                <span className="msg-time bg-transparent">
+                  {new Date(msg.createdAt).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+              </div>
+            );
+          } else return;
+        })}
+        <div />
+      </div>
+
+      {/* Input Footer */}
+      <footer className="text-sender d-flex align-items-center px-3 py-2 border-top position-fixed bottom-0">
+        <form onSubmit={handleSend} className="d-flex flex-grow-1 text-form">
+          <textarea
+            value={newMessage}
+            onChange={(e) => {
+              setNewMessage(e.target.value);
             }}
+            placeholder="Type your message..."
+            className="form-control me-2 text-white  placeholder-wave border-0 px-3 py-1 rounded w-100"
+            maxLength={500}
+            style={{ backgroundColor: "#292727" }}
+          />
+          <button
+            type="submit"
+            className="btn-send border-0 bg-white rounded-end-circle rounded-start-circle"
           >
-            <BsSend className="send-btn-img m-2" />
+            <BsSend className="text-black bg-white fs-5" />
           </button>
         </form>
-        <BsPaperclip className="clip fs-6 text-white-50 position-absolute" />
-        <BsCamera className="send-camera position-absolute" />
       </footer>
     </div>
   );
-}
+};
 
-export default ChatDetails
+export default ChatDetails;
