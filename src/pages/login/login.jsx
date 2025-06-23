@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { BsChatDots } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 import "./login.css";
@@ -19,7 +19,8 @@ const login = ({ onLogin }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      // const res = await api.post("/api/v1/sign-in", formData);
+      const res = await api.post("/auth/sign-in", formData);
+      localStorage.setItem("user", res.data._id);
       // const { token, user: userData } = res.data;
 
       // // Save token in localStorage
@@ -40,7 +41,7 @@ const login = ({ onLogin }) => {
       navigate("/");
     } catch (err) {
       console.error("Login failed:", err.response?.data || err.message);
-      setError("Invalid credentials. Please try again.");
+      setError("Invalid credentials.");
     }
   };
 
@@ -48,15 +49,15 @@ const login = ({ onLogin }) => {
     <div className="login-page px-1 d-flex justify-content-center flex-column align-items-center">
       <Link
         to="/"
-        className="logo justify-content-center mt-5 text-decoration-none text-white fs-1 mb-4 bg-black"
+        className="logo justify-content-center mt-5 text-decoration-none text-white fs-1 mb-4 "
       >
-        <BsChatDots className=" bg-black" />
-        <h1 className=" ps-1 mb-0 bg-black">Talk</h1>
+        <BsChatDots className=" " />
+        <h1 className=" ps-1 mb-0 ">Talk</h1>
       </Link>
 
       <div className="d-flex w-75 justify-content-center flex-column align-items-center border rounded-3 py-2">
         <h1 className=" w-75 text-white">Login</h1>
-        {error && <p className="error">{error}</p>}
+        {error && <p className="error text-danger text-wrap">{error}</p>}
         <form
           onSubmit={handleSubmit}
           action=""

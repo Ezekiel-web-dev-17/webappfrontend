@@ -6,7 +6,7 @@ import { BsPerson } from "react-icons/bs";
 const Talkers = ({ no, i }) => {
   return (
     <Link key={i} to="/chat/:chatId " className=" text-decoration-none">
-      <div className="chat pt-1 pb-2 d-flex align-items-center bg-black gap-3 position-relative px-3">
+      <div className="chat pt-1 pb-2 d-flex align-items-center  gap-3 position-relative px-3">
         <BsPerson
           className="border-1 p-1 border-white border rounded-circle text-white bg-white bg-opacity-50"
           style={{

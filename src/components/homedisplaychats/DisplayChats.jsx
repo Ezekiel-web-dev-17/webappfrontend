@@ -12,7 +12,7 @@ const dateFunction = (dateStr) => {
 
 const DisplayChats = ({ searched }) => {
   return (
-    <div className="display-chats bg-black pb-5 px-0">
+    <div className="display-chats  pb-5 px-0">
       {/* Shows people if searched length is more than 0 */}
       {searched.length > 0 ? (
         searched.map((req, i) => (
@@ -21,7 +21,7 @@ const DisplayChats = ({ searched }) => {
             key={i}
             className=" text-decoration-none"
           >
-            <div className="chat pt-1 pb-2 d-flex align-items-center bg-black  border-2 border-white border-bottom gap-3 position-relative">
+            <div className="chat pt-1 pb-2 d-flex align-items-center   border-2 border-white border-bottom gap-3 position-relative">
               <BsPerson
                 className="border-1 p-1 border-white border rounded-circle text-white bg-white bg-opacity-50"
                 style={{
@@ -62,7 +62,7 @@ const DisplayChats = ({ searched }) => {
           </Link>
         ))
       ) : (
-        <p className="bg-black text-white pt-5 ms-4 fs-6">
+        <p className=" text-white pt-5 ms-4 fs-6">
           Sorry, no Search found 🥺🥺😞
         </p>
       )}

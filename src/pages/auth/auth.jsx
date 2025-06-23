@@ -20,11 +20,10 @@ const auth = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      // await api.post("/api/v1/sign-up", formData);
+      await api.post("/auth/sign-up", formData);
       navigate("/login");
     } catch (err) {
       console.error("Sign-up failed:", err.response?.data || err.message);
-      // Maybe show an error message UI here
     }
   };
 
@@ -32,10 +31,10 @@ const auth = () => {
     <div className="sign-up-page px-1 d-flex justify-content-center flex-column align-items-center">
       <Link
         to="/"
-        className="logo justify-content-center mt-5 text-decoration-none text-white fs-1 mb-4 bg-black"
+        className="logo justify-content-center mt-5 text-decoration-none text-white fs-1 mb-4 "
       >
-        <BsChatDots className="bg-black" />
-        <h1 className=" ps-1 mb-0 bg-black">Talk</h1>
+        <BsChatDots className="" />
+        <h1 className=" ps-1 mb-0 ">Talk</h1>
       </Link>
 
       <div className="d-flex w-75 justify-content-center flex-column align-items-center border rounded-3 py-2">

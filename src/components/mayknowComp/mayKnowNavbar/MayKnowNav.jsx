@@ -17,7 +17,7 @@ const MayKnowNav = ({ searchMode, setFilter, filter, setSearchMode }) => {
       {searchMode ? (
         <>
           <input
-            className="border-0  px-3 py-1 me-4 w-100 bg-light bg-opacity-25 rounded-pill"
+            className="border-0  px-3 py-1 me-4 w-100 bg-light bg-opacity-25 rounded-pill font-monospace"
             type="text"
             name="search"
             placeholder="Search..."

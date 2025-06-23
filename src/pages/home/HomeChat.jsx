@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./HomeChat.css";
 import { Link } from "react-router-dom";
 import { BsSendPlusFill } from "react-icons/bs";
-import NavBar from "../../components/navBar/NavBar";
+import NavBar from "../../components/navBar/NavBar.jsx";
 import DisplayChats from "../../components/homedisplaychats/DisplayChats.jsx";
 import { demoReq } from "../../demo/demoReq.js";
 

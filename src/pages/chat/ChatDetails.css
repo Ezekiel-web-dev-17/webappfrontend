@@ -1,9 +1,5 @@
 * {
-  background: #000000;
-}
-
-.chat-nav {
-  box-shadow: 0 3px 5px #5f5e5e;
+  background: #000;
 }
 
 .chat {
@@ -11,21 +7,14 @@
 }
 
 .text-sender {
-  bottom: -1vh;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  box-shadow: 0 -3px 5px #5f5e5e;
+  width: 100vw;
+  bottom: 0px;
+  padding-bottom: 10px;
 }
 
 .text-sender textarea {
-  background: #3b3b3b;
-  height: 30px;
-}
-
-.text-sender textarea:focus {
-  outline: 0;
+  max-height: 20px;
+  min-width: 270px;
 }
 
 .text-form textarea::placeholder {
@@ -34,13 +23,13 @@
 }
 
 .text-form textarea:focus-within {
-  background: #292727;
   font-weight: 500;
 }
 
 .messages-area {
   width: 370px;
   place-self: center;
+  min-height: 100dvh;
 }
 
 .mine,
@@ -49,25 +38,62 @@
   max-width: 270px;
 }
 
-.mine span,
-.theirs span {
-  font-size: 14px;
+.mine div,
+.theirs div {
+  font-size: 12px;
 }
 
 .mine {
-  position: relative;
-  left: 4rem;
+  place-self: end;
   background: rgb(92, 92, 92);
   color: #eee;
 }
 
-.mine span {
-  margin-left: 13.5em;
+.mine div {
+  text-align: end;
 }
 
 .theirs {
-  position: relative;
-  right: 00px;
-  color: #000000;
+  color: 000;
   background: #e6e6e6;
+}
+
+footer {
+  max-width: fit-content;
+  right: 0;
+}
+
+.text-sender form {
+  width: 92vw;
+  background: rgba(108, 117, 125, 0.75);
+}
+
+@media (width: 320px) {
+  footer {
+    left: 10px;
+  }
+
+  .text-sender form {
+    width: 78vw;
+  }
+
+  .text-sender textarea {
+    min-width: 230px;
+    min-height: 20px;
+  }
+
+  .messages-area {
+    max-width: 300px;
+    padding-inline: 0;
+  }
+
+  .mine,
+  .theirs {
+    max-width: 215px;
+  }
+
+  .send {
+    max-height: 20px;
+    max-width: 20px;
+  }
 }

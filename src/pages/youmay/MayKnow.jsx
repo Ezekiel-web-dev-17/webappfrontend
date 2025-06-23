@@ -36,29 +36,33 @@ const MayKnow = () => {
   const usersGetter = async () => {
     try {
       const res = await api.get("/users/");
-      setRealChats(res);
+      const data = [res.data];
+      setRealChats(
+        data.map((each) => {
+          return each.name;
+        })
+      );
     } catch (error) {
       setError(error.message);
       console.error("Error getting users: ", error.message);
     }
   };
 
-  // changes the searched array content
-  const talk = (filter) => {
-    // const searching = noOfChat.filter((chat) => {
-    //   return chat.toLowerCase().includes(filter.toLowerCase());
-    // });
-    const searching = realChats.filter((chat) => {
-      return chat?.data.name.toLowerCase().includes(filter.toLowerCase());
-    });
-    setSearched(searching);
-  };
-
   // allows change of searched on changing input value
   useEffect(() => {
+    // changes the searched array content
+    const talk = (filter) => {
+      // const searching = noOfChat.filter((chat) => {
+      //   return chat.toLowerCase().includes(filter.toLowerCase());
+      // });
+      const searching = realChats.filter((chat) => {
+        return chat?.data.name.toLowerCase().includes(filter.toLowerCase());
+      });
+      setSearched(searching);
+    };
     usersGetter();
     talk(filter);
-  }, [filter || []]);
+  }, [filter]);
 
   return (
     <div className="text-white may-know">
@@ -74,30 +78,32 @@ const MayKnow = () => {
           to="/sign-up "
           className="  text-secondary-emphasis text-decoration-none"
         >
-          <div className="chat pt-1 pb-2 d-flex align-items-center bg-black gap-3 ps-3">
+          <div className="chat pt-1 pb-2 d-flex align-items-center  gap-3 ps-3">
             <BsPersonAdd
               className="bg-white rounded-circle p-2 overflow-visible"
               style={{ fontSize: "35px" }}
             />
             <div className="div1 ps-0 me-3 text-white">
-              <h6 className="mb-0">New Contact</h6>
+              <h6 className="mb-0">Add New Contact</h6>
             </div>
           </div>
         </Link>
 
-        <p className="bg-black fw-bold ps-3 pt-2 mb-0 text-white-50">
+        <p className=" fw-bold ps-3 pt-2 mb-0 text-white-50">
           Talkers You May Know On Talk
         </p>
-        <div className="bg-black pb-5">
-          <p className=" text-white ps-4 bg-black">
-            Couldn't Get People You may Know Due To:{" "}
-            <i className=" text-danger fw-bold bg-black">{error}</i>
-          </p>
+        <div className=" pb-5">
+          {error && (
+            <p className=" text-white ps-4 ">
+              Couldn't Get People You may Know Due To:{" "}
+              <i className=" text-danger fw-bold ">{error}</i>
+            </p>
+          )}
           {/* Shows people if searched length is more than 0 */}
           {searched.length > 0 ? (
             searched.map((no, i) => <Talkers no={no} i={i} />)
           ) : (
-            <p className="bg-black ms-4 fs-6">Sorry, no Search found 🥺🥺😞</p>
+            <p className=" ms-4 fs-6">Sorry, no Search found 🥺🥺😞</p>
           )}
         </div>
       </main>

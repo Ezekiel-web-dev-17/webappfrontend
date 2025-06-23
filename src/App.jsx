@@ -9,47 +9,38 @@ import ChatDetails from "./pages/chat/ChatDetails.jsx";
 import MayKnow from "./pages/youmay/MayKnow.jsx";
 
 function App() {
-  // State to hold the decoded token (or null if not yet)
-  const [decodedToken, setDecodedToken] = useState({
-    id: 913084797478173,
-    name: "Me",
-  });
+  // // State to hold the decoded token (or null if not yet)
+  // const [decodedToken, setDecodedToken] = useState(null);
 
-  const tryDecode = async () => {
-    const token = localStorage.getItem("auth-token");
-    if (token) {
-      const mod = await import("jwt-decode");
-      const jwtDecode = mod.default || mod;
-      try {
-        const payload = jwtDecode(token);
-        setDecodedToken(payload);
-      } catch (err) {
-        console.warn("Invalid token, clearing it.");
-        localStorage.removeItem("auth-token");
-      }
-    }
-  };
+  // const tryDecode = async () => {
+  //   const token = localStorage.getItem("auth-token");
+  //   if (token) {
+  //     const mod = await import("jwt-decode");
+  //     const jwtDecode = mod.default || mod;
+  //     try {
+  //       const payload = jwtDecode(token);
+  //       setDecodedToken(payload);
+  //     } catch (err) {
+  //       console.warn("Invalid token, clearing it.");
+  //       localStorage.removeItem("auth-token");
+  //     }
+  //   }
+  // };
 
-  // On mount, try to decode whatever is in localStorage (if any)
-  useEffect(() => {
-    tryDecode();
-  }, []);
+  // // On mount, try to decode whatever is in localStorage (if any)
+  // useEffect(() => {
+  //   tryDecode();
+  // }, []);
 
   return (
     <ApiProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<HomeChat user={decodedToken} />} />
+          <Route path="/" element={<HomeChat />} />
           <Route path="/sign-up" element={<Auth />} />
-          <Route
-            path="/login"
-            element={<Login onLogin={(token) => setDecodedToken(token)} />}
-          />
+          <Route path="/login" element={<Login />} />
           <Route path="/may-know" element={<MayKnow />} />
-          <Route
-            path="/chat/:chatId"
-            element={<ChatDetails user={decodedToken} />}
-          />
+          <Route path="/chat/:chatId" element={<ChatDetails />} />
         </Routes>
       </BrowserRouter>
     </ApiProvider>
