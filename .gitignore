@@ -1,3 +1,6 @@
 .vercel
 demo
 node_modules
+.vscode
+.vercelignore
+.env
