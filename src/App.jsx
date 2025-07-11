@@ -7,6 +7,7 @@ import Auth from "./pages/auth/auth.jsx";
 import Login from "./pages/login/login.jsx";
 import ChatDetails from "./pages/chat/ChatDetails.jsx";
 import MayKnow from "./pages/youmay/MayKnow.jsx";
+import Error from "./pages/Error/Error.jsx";
 
 function App() {
   // // State to hold the decoded token (or null if not yet)
@@ -41,6 +42,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/may-know" element={<MayKnow />} />
           <Route path="/chat/:chatId" element={<ChatDetails />} />
+          <Route path="/*" element={<Error />} />
         </Routes>
       </BrowserRouter>
     </ApiProvider>

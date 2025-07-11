@@ -1,4 +1,3 @@
-// src/hooks/useAuth.js
 import { useContext, useState, useEffect } from "react";
 import { ApiContext } from "../context/ApiContext";
 import jwtDecode from "jwt-decode";

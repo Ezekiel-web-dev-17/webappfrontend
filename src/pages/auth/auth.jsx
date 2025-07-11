@@ -37,8 +37,8 @@ const auth = () => {
         <h1 className=" ps-1 mb-0 ">Talk</h1>
       </Link>
 
-      <div className="d-flex w-75 justify-content-center flex-column align-items-center border rounded-3 py-2">
-        <h1 className=" w-75 text-white">Sign-Up</h1>
+      <div className="d-flex justify-content-center flex-column align-items-center border rounded-3 py-2">
+        <h3 className=" w-75 text-white">Sign up</h3>
 
         <form
           action=""

@@ -3,20 +3,17 @@ import { Link, useParams } from "react-router-dom";
 import { ApiContext } from "../../context/ApiContext.jsx";
 import "./ChatDetails.css";
 import { BsArrowLeftShort, BsPerson, BsSend } from "react-icons/bs";
-import { demoMessages } from "../../demo/demoMsgs.js";
 
 const ChatDetails = () => {
-  const user = localStorage.getItem("user");
+  const user = localStorage.getItem("userId");
   const { chatId } = useParams();
   const api = useContext(ApiContext);
-  const [messages, setMessages] = useState(demoMessages);
+  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [to, setTo] = useState({});
   const messagesEndRef = useRef(null);
-  const conversations = messages.filter((msg) =>
-    msg.participants.includes(Number(to._id))
-  );
-  const [error, setError] = useState(null);
+  let conversations = messages[0] ? messages[0] : [];
+  const [error, setError] = useState("");
 
   // Fetch messages for this chatId
   useEffect(() => {
@@ -24,9 +21,7 @@ const ChatDetails = () => {
       const getMsg = async () => {
         try {
           const res = await api.get("/messages/");
-          // Assume res.data is an array of { _id, text, senderId, timestamp }
-          setMessages(res.data);
-          resolve("Gotten messages");
+          resolve(res);
         } catch (error) {
           reject(error);
         }
@@ -35,7 +30,10 @@ const ChatDetails = () => {
       getMsg();
     })
       .then((res) => {
-        console.log(res);
+        setMessages([res.data.data]);
+        conversations = res.data.data.filter((msg) =>
+          msg.participants.includes(to._id)
+        );
       })
       .catch((reject) => {
         setError("Could not fetch Messages");
@@ -46,8 +44,7 @@ const ChatDetails = () => {
       const getUser = async () => {
         try {
           const res = await api.get(`/users/${chatId.slice(1)}`);
-          // Assume res.data is an array of { _id, text, senderId, timestamp }
-          resolve(res);
+          resolve(res.data);
         } catch (error) {
           reject(error);
         }
@@ -58,7 +55,6 @@ const ChatDetails = () => {
       .then((res) => {
         const { _id, name } = res;
         setTo({ _id, name });
-        console.log(res);
       })
       .catch((reject) => {
         setError("Could not fetch User");
@@ -72,7 +68,7 @@ const ChatDetails = () => {
       behavior: "smooth",
       block: "end",
     });
-  }, [messages]);
+  }, [messages, setMessages]);
 
   const handleSend = async (e) => {
     e.preventDefault();
@@ -80,13 +76,13 @@ const ChatDetails = () => {
 
     const messageData = {
       text: newMessage,
-      participants: [Number(to._id), user],
+      participants: [to._id, user],
     };
 
     // Post request to Create messages
     try {
       const res = await api.post("/messages/create", messageData);
-      setMessages((prev) => [...prev, res.data]);
+      setMessages((prevCreatedMsgs) => [...prevCreatedMsgs, messageData]);
       setNewMessage("");
     } catch (err) {
       console.error("Failed to send message:", err);
@@ -128,7 +124,7 @@ const ChatDetails = () => {
             <div className=" ">
               {error && (
                 <p className="text-white mx-5 mt-3 fs-6">
-                  Please <Link to="/login">login</Link> to view the chat.
+                  Please <Link to="/login">login</Link> to view the chat.{error}
                 </p>
               )}
               <div
@@ -145,7 +141,7 @@ const ChatDetails = () => {
                   new Date(
                     conversations[i >= 2 ? i - 1 : i].createdAt
                   ).toDateString() ||
-                new Date(conversations[1].createdAt).toDateString() !==
+                new Date(conversations[1]?.createdAt).toDateString() !==
                   new Date(conversations[0].createdAt).toDateString() ||
                 i === 0 ? (
                   <p className="mt-5 bg-transparent">{`${

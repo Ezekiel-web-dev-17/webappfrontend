@@ -7,3 +7,7 @@
   height: 100vh;
   background: #000;
 }
+
+.login-page > div {
+  width: 270px;
+}

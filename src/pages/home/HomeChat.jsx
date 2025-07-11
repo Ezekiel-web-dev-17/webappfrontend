@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./HomeChat.css";
 import { Link } from "react-router-dom";
 import { BsSendPlusFill } from "react-icons/bs";
 import NavBar from "../../components/navBar/NavBar.jsx";
 import DisplayChats from "../../components/homedisplaychats/DisplayChats.jsx";
-import { demoReq } from "../../demo/demoReq.js";
 
 const HomeChat = () => {
   // to see search input
@@ -14,22 +13,9 @@ const HomeChat = () => {
   const [filter, setFilter] = useState("");
   const [searched, setSearched] = useState([]);
 
-  demoReq.sort(
-    (a, b) => new Date(b.time).getDate() - new Date(a.time).getDate()
-  );
-
-  // changes the searched array content
-  const talk = (filter) => {
-    const searching = demoReq.filter((chat) => {
-      return chat.from.toLowerCase().includes(filter.toLowerCase());
-    });
-    setSearched(searching);
-  };
-
-  // allows change of searched on changing input value
-  useEffect(() => {
-    talk(filter);
-  }, [filter]);
+  // demoReq.sort(
+  //   (a, b) => new Date(b.time).getDate() - new Date(a.time).getDate()
+  // );
 
   return (
     <div className="home-div position-relative">
@@ -39,7 +25,13 @@ const HomeChat = () => {
         searchMode={searchMode}
         setSearchMode={setSearchMode}
       />
-      <DisplayChats searched={searched} />
+
+      <DisplayChats
+        searched={searched}
+        setSearched={setSearched}
+        searchMode={searchMode}
+        filter={filter}
+      />
 
       <Link to="/may-know" className="text-secondary-emphasis">
         <BsSendPlusFill

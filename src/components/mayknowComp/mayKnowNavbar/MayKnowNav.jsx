@@ -4,7 +4,7 @@ import { BsArrowLeftShort, BsSearch } from "react-icons/bs";
 import "./MayKnowNav.css";
 import { Link } from "react-router-dom";
 
-const MayKnowNav = ({ searchMode, setFilter, filter, setSearchMode }) => {
+const MayKnowNav = ({ searchMode, setSearched, searched, setSearchMode }) => {
   return (
     <nav
       style={{ top: "0px", zIndex: "2" }}
@@ -22,9 +22,9 @@ const MayKnowNav = ({ searchMode, setFilter, filter, setSearchMode }) => {
             name="search"
             placeholder="Search..."
             onChange={(e) => {
-              setFilter(e.target.value);
+              setSearched(e.target.value);
             }}
-            value={filter}
+            value={searched}
           />
         </>
       ) : (

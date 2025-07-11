@@ -8,3 +8,7 @@
   background: #000;
   height: 100vh;
 }
+
+.sign-up-page > div {
+  width: 270px;
+}

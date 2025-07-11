@@ -1,70 +1,125 @@
 // Whenever there's data ask chat gpt why this code runs.
-
 import "./DisplayChats.css";
-import { Link } from "react-router-dom";
-import dater from "../../demo/demoReq";
-import { BsPerson } from "react-icons/bs";
+import EachTalker from "../eachTalker/EachTalker.jsx";
+import { useContext, useEffect, useState } from "react";
+import { ApiContext } from "../../context/ApiContext.jsx";
 
-const dateFunction = (dateStr) => {
-  let convertedDate = new Date(dateStr);
-  return convertedDate;
-};
+const DisplayChats = ({ searched, setSearched, filter, searchMode }) => {
+  const userId = localStorage.getItem("userId");
+  const api = useContext(ApiContext);
+  const [error, setError] = useState("");
+  const [user, setUser] = useState([]);
+  const [usersNames, setUsersNames] = useState([]);
+  const [talkersId, setTalkersId] = useState([]);
+  const [real, setReal] = useState({});
 
-const DisplayChats = ({ searched }) => {
+  const fetchUsersId = async () => {
+    try {
+      function spokenTo(eachResponse) {
+        return eachResponse.data.data[1].participants.includes(userId)
+          ? eachResponse.participants.find((id) => id !== userId)
+          : false;
+      }
+
+      const response = await api.get("/messages");
+      console.log(typeof response);
+      console.log(response);
+
+      const peopleSpokenTo = [response].map((eachResponse) => {
+        return spokenTo(eachResponse);
+      });
+
+      const spokenToWithNoRepeat = Array.from(new Set(peopleSpokenTo));
+
+      setTalkersId(spokenToWithNoRepeat);
+
+      function recentMsgToEachPerson(arr, response) {
+        const map = {};
+        response.map((res) => {
+          for (let i = 0; i < arr.length; i++) {
+            if (res.participants.includes(arr[i])) {
+              map[arr[i]] = res;
+            }
+          }
+        });
+
+        return map;
+      }
+
+      setReal(recentMsgToEachPerson(spokenToWithNoRepeat, response));
+    } catch (error) {
+      const err = new Error("Error getting users Id", error);
+      setError(error.message);
+      throw err;
+    }
+  };
+
+  function addNameKey(msgs, names) {
+    [msgs].map((msgObj) => {
+      for (let i = 0; i < names.length; i++) {
+        for (let ids in msgObj) {
+          msgObj[ids]["name"] = names[i++];
+          setUser((prevMsgs) => [...prevMsgs, msgObj[ids]]);
+        }
+      }
+    });
+  }
+
+  const fetchUsers = async () => {
+    try {
+      for (let i = 0; i < talkersId.length; i++) {
+        if (talkersId[i] === false) return;
+        const response = await api.get(`/users/${talkersId[i]}`);
+        setUsersNames((prevNameRes) => [...prevNameRes, response.data.name]);
+      }
+    } catch (error) {
+      const err = new Error("Error getting users", error.message);
+      setError(error.message);
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    fetchUsersId();
+    fetchUsers();
+    addNameKey(real, usersNames);
+  }, []);
+
+  // changes the array of searched names
+  const talk = (filter) => {
+    const searching = user.filter((chat) => {
+      return chat.toLowerCase().includes(filter.toLowerCase());
+    });
+    setSearched(searching);
+  };
+
+  // allows change of searched on changing input value
+  useEffect(() => {
+    talk(filter);
+  }, [filter]);
+
   return (
     <div className="display-chats  pb-5 px-0">
       {/* Shows people if searched length is more than 0 */}
-      {searched.length > 0 ? (
-        searched.map((req, i) => (
-          <Link
-            to={`/chat/:${i * 2345681879 + 913084797478173}`}
-            key={i}
-            className=" text-decoration-none"
-          >
-            <div className="chat pt-1 pb-2 d-flex align-items-center   border-2 border-white border-bottom gap-3 position-relative">
-              <BsPerson
-                className="border-1 p-1 border-white border rounded-circle text-white bg-white bg-opacity-50"
-                style={{
-                  minHeight: "30px",
-                  minWidth: "30px",
-                }}
-                alt="person img"
-              />
-              <div className="div1 ps-0 me-3 text-white">
-                <h6 className="mb-0">{req.from}</h6>
-                <p
-                  className=" text-white-50"
-                  style={{ fontSize: "13px", marginBlockEnd: "3px" }}
-                >
-                  {req.recentChat.length < 40
-                    ? req.recentChat
-                    : `${req.recentChat.slice(0, 40)}...`}
-                </p>
-              </div>
-              <div className="div2 mt-0 text-white-50 position-absolute end-0">
-                {dateFunction(req.time).toString() === Date()
-                  ? "Now"
-                  : dater(req.time) === "Yesterday"
-                  ? "Yesterday"
-                  : dateFunction(req.time).getTime() <
-                      dateFunction(Date()).getTime() &&
-                    dateFunction(req.time).toDateString().slice(4) ===
-                      dateFunction(Date()).toDateString().slice(4)
-                  ? dateFunction(req.time).toISOString().slice(11, 16) //normal time hh:mm:ss
-                  : dateFunction(req.time).getTime() <
-                      dateFunction(Date()).getTime() &&
-                    dateFunction(req.time).toDateString().slice(4) !==
-                      dateFunction(Date()).toDateString().slice(4)
-                  ? dateFunction(req.time).toISOString().slice(0, 10)
-                  : req.time.slice(0, 10).replaceAll(" ", "/")}
-              </div>
-            </div>
-          </Link>
-        ))
-      ) : (
-        <p className=" text-white pt-5 ms-4 fs-6">
-          Sorry, no Search found 🥺🥺😞
+      {error && (
+        <p
+          className="text-center text-white ps-4 pt-3 position-absolute bg-transparent"
+          style={{ fontSize: "12px" }}
+        >
+          <strong className=" text-danger ">{`${error}`}</strong>, Can't connect
+          to the Internet.😭😞😖😟
         </p>
+      )}
+      {searchMode ? (
+        searched.length > 0 ? (
+          <EachTalker searched={searched} userId={userId} />
+        ) : (
+          <p className=" text-white pt-5 ms-4 fs-6">
+            Sorry, no Search found 🥺🥺😞
+          </p>
+        )
+      ) : (
+        <EachTalker searched={searched} userId={userId} />
       )}
     </div>
   );

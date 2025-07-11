@@ -19,25 +19,9 @@ const login = ({ onLogin }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const res = await api.post("/auth/sign-in", formData);
-      localStorage.setItem("user", res.data._id);
-      // const { token, user: userData } = res.data;
-
-      // // Save token in localStorage
-      // localStorage.setItem("auth-token", token);
-
-      // // Decode token to get payload
-      // const mod = await import("jwt-decode");
-      // const jwtDecode = mod.default || mod;
-      // const payload = jwtDecode(token);
-
-      // // Let parent know who’s logged in
-      // onLogin(payload);
-
-      // // Optionally store user data separately
-      // localStorage.setItem("user", JSON.stringify(userData));
-
-      // goes to home page
+      const response = await api.post("/auth/sign-in", formData);
+      localStorage.setItem("userId", response.data.data.user._id);
+      localStorage.setItem("userToken", response.data.data.token);
       navigate("/");
     } catch (err) {
       console.error("Login failed:", err.response?.data || err.message);
@@ -55,8 +39,8 @@ const login = ({ onLogin }) => {
         <h1 className=" ps-1 mb-0 ">Talk</h1>
       </Link>
 
-      <div className="d-flex w-75 justify-content-center flex-column align-items-center border rounded-3 py-2">
-        <h1 className=" w-75 text-white">Login</h1>
+      <div className="d-flex justify-content-center flex-column align-items-center border rounded-3 py-2">
+        <h3 className=" w-75 text-white">Login</h3>
         {error && <p className="error text-danger text-wrap">{error}</p>}
         <form
           onSubmit={handleSubmit}
